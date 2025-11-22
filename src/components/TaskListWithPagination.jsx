@@ -79,6 +79,8 @@ const TaskListWithPagination = ({ tasks, onRefresh, isAdmin, title = "Tasks" }) 
                   <th>Category</th>
                   <th>Task Name</th>
                   <th>Assigned To</th>
+                  <th>Priority</th>
+                  <th>Deadline</th>
                   <th>Status</th>
                   <th>Updated Till</th>
                   <th>Approval</th>
@@ -92,6 +94,12 @@ const TaskListWithPagination = ({ tasks, onRefresh, isAdmin, title = "Tasks" }) 
                     <td>{task.taskCategory}</td>
                     <td>{task.taskName}</td>
                     <td>{task.employeeName}</td>
+                    <td>
+                      <span className={`priority-badge priority-${task.priority || 'medium'}`}>
+                        {task.priority || 'medium'}
+                      </span>
+                    </td>
+                    <td>{task.deadline ? new Date(task.deadline).toLocaleString() : '-'}</td>
                     <td>
                       <span className={`badge ${getStatusBadge(task.status)}`}>
                         {task.status.replace('_', ' ')}

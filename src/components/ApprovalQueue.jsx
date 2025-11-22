@@ -14,9 +14,9 @@ const ApprovalQueue = ({ onApprovalChange }) => {
 
   const loadPendingTasks = async () => {
     setLoading(true);
-    const response = await taskService.getTasks({ approvalStatus: 'pending' });
+    const response = await taskService.getTasks();
     if (response.success) {
-      setPendingTasks(response.data.filter(t => t.status == 'pending'));
+      setPendingTasks(response.data.filter(t => t.status === 'completed' && t.approvalStatus === 'pending'));
     }
     setLoading(false);
   };
@@ -68,7 +68,9 @@ const ApprovalQueue = ({ onApprovalChange }) => {
                 <th>Task Name</th>
                 <th>Employee</th>
                 <th>Status</th>
-                <th>Updated Till</th>
+                <th>Priority</th>
+                <th>Deadline</th>
+                <th>Comment</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -84,7 +86,13 @@ const ApprovalQueue = ({ onApprovalChange }) => {
                       {task.status.replace('_', ' ')}
                     </span>
                   </td>
-                  <td>{task.updatedTill || '-'}</td>
+                  <td>
+                    <span className={`priority-badge priority-${task.priority || 'medium'}`}>
+                      {task.priority || 'medium'}
+                    </span>
+                  </td>
+                  <td>{task.deadline ? new Date(task.deadline).toLocaleString() : '-'}</td>
+                  <td>{task.employeeTaskComment || '-'}</td>
                   <td>
                     <div className="action-buttons">
                       <button

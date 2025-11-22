@@ -6,7 +6,10 @@ const EmployeeTaskList = ({ tasks, onRefresh, activeTab }) => {
   const [editingTask, setEditingTask] = useState(null);
   const [formData, setFormData] = useState({
     status: '',
-    updatedTill: ''
+    updatedTill: '',
+    employeeTaskComment: '',
+    deadline: '',
+    priority: ''
   });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
@@ -21,13 +24,22 @@ const EmployeeTaskList = ({ tasks, onRefresh, activeTab }) => {
     setEditingTask(task.id);
     setFormData({
       status: task.status,
-      updatedTill: task.updatedTill || ''
+      updatedTill: task.updatedTill || '',
+      employeeTaskComment: '',
+      deadline: task.deadline || '',
+      priority: task.priority || 'medium'
     });
   };
 
   const handleCancel = () => {
     setEditingTask(null);
-    setFormData({ status: '', updatedTill: '' });
+    setFormData({
+      status: '',
+      updatedTill: '',
+      employeeTaskComment: '',
+      deadline: '',
+      priority: ''
+    });
   };
 
   const handleSave = async (taskId) => {
@@ -35,7 +47,10 @@ const EmployeeTaskList = ({ tasks, onRefresh, activeTab }) => {
     const response = await taskService.updateTaskStatus(
       taskId,
       formData.status,
-      formData.updatedTill
+      formData.updatedTill,
+      formData.employeeTaskComment,
+      formData.deadline,
+      formData.priority
     );
 
     if (response.success) {
@@ -106,6 +121,17 @@ const EmployeeTaskList = ({ tasks, onRefresh, activeTab }) => {
                 <div className="task-detail">
                   <strong>Task:</strong> {task.taskName}
                 </div>
+                <div className="task-detail">
+                  <strong>Deadline:</strong> {task.deadline ? new Date(task.deadline).toLocaleString() : 'Not set'}
+                </div>
+                <div className="task-detail">
+                  <strong>Priority:</strong> <span className={`priority-badge priority-${task.priority || 'medium'}`}>{task.priority || 'medium'}</span>
+                </div>
+                {task.employeeTaskComment && (
+                  <div className="task-detail">
+                    <strong>Comment:</strong> {task.employeeTaskComment}
+                  </div>
+                )}
 
                 {editingTask === task.id ? (
                   <div className="edit-form">
@@ -129,6 +155,41 @@ const EmployeeTaskList = ({ tasks, onRefresh, activeTab }) => {
                         value={formData.updatedTill}
                         onChange={(e) => setFormData({ ...formData, updatedTill: e.target.value })}
                         disabled={loading}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Deadline</label>
+                      <input
+                        type="datetime-local"
+                        value={formData.deadline}
+                        onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Priority</label>
+                      <select
+                        value={formData.priority}
+                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                        disabled={loading}
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Comment</label>
+                      <textarea
+                        value={formData.employeeTaskComment}
+                        onChange={(e) => setFormData({ ...formData, employeeTaskComment: e.target.value })}
+                        placeholder="Add your comment here..."
+                        rows="3"
+                        disabled={loading}
+                        className="comment-textarea"
                       />
                     </div>
 

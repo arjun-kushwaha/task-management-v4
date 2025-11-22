@@ -89,11 +89,18 @@ export const taskService = {
     return response.json();
   },
 
-  async updateTaskStatus(id, status, updatedTill) {
-    const response = await fetch(`${API_BASE_URL}/update_status.php`, {
+  async updateTaskStatus(id, status, updatedTill, employeeTaskComment, deadline, priority) {
+    const response = await fetch(`${API_BASE_URL}/tasks.php`, {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ id, status, updatedTill }),
+      body: JSON.stringify({
+        id,
+        status,
+        updated_till: updatedTill,
+        employee_task_comment: employeeTaskComment,
+        deadline,
+        priority
+      }),
     });
     return response.json();
   },

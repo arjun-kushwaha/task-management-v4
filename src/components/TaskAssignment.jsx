@@ -11,6 +11,8 @@ const TaskAssignment = ({ onTaskCreated }) => {
     task_category: '',
     task_name: '',
     assigned_to: '',
+    deadline: '',
+    priority: 'medium',
     created_by: loggedInUser.id
   });
   const [loading, setLoading] = useState(false);
@@ -38,9 +40,13 @@ const TaskAssignment = ({ onTaskCreated }) => {
     setLoading(true);
 
     const taskData = {
-      ...formData,
       client_id: parseInt(formData.client_id),
-      assigned_to: parseInt(formData.assigned_to)
+      task_category: formData.task_category,
+      task_name: formData.task_name,
+      assigned_to: parseInt(formData.assigned_to),
+      deadline: formData.deadline,
+      priority: formData.priority,
+      created_by: loggedInUser.id
     };
 
     const response = await taskService.createTask(taskData);
@@ -52,9 +58,13 @@ const TaskAssignment = ({ onTaskCreated }) => {
         task_category: '',
         task_name: '',
         assigned_to: '',
+        deadline: '',
+        priority: 'medium',
         created_by: loggedInUser.id
       });
-      //  onTaskCreated();    // this comment make the toast to show properly
+      if (onTaskCreated) {
+        onTaskCreated();
+      }
     } else {
       setToast({ message: response.message || 'Failed to create task', type: 'error' });
     }
@@ -142,6 +152,33 @@ const TaskAssignment = ({ onTaskCreated }) => {
                   {emp.name}
                 </option>
               ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label>Deadline *</label>
+            <input
+              type="datetime-local"
+              name="deadline"
+              value={formData.deadline}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Priority *</label>
+            <select
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+              required
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
         </div>
